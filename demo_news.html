@@ -46,7 +46,7 @@
 
     <script>
         function fetchNews() {
-            fetch('/.netlify/functions/fetchNews')
+            fetch('/.netlify/functions/get_content')
                 .then(response => response.json())
                 .then(data => {
                     displayNews(data.articles);
