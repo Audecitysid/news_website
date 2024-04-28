@@ -46,25 +46,14 @@
 
     <script>
         function fetchNews() {
-
-
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const apiUrl = `${proxyUrl}https://newsapi.org/v2/top-headlines?country=us&apiKey=5ff6da31ba214f1285962596a3670a8b`;
-
-                fetch(apiUrl, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                        
-
-                    }
-                })
+            fetch('/.netlify/functions/fetchNews')
                 .then(response => response.json())
                 .then(data => {
                     displayNews(data.articles);
                 })
                 .catch(error => console.error('Error fetching data:', error));
-
         }
+
 
         function displayNews(articles) {
             const container = document.getElementById('news-container');
