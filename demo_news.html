@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Feed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .article {
+            background: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .article-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .article-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .article-description {
+            font-size: 16px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .article-link {
+            margin-top: 10px;
+            display: inline-block;
+            text-decoration: none;
+            color: #1a0dab;
+        }
+    </style>
+</head>
+<body>
+    <div id="news-container"></div>
+
+    <script>
+        function fetchNews() {
+
+
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const apiUrl = `${proxyUrl}https://newsapi.org/v2/top-headlines?country=us&apiKey=5ff6da31ba214f1285962596a3670a8b`;
+
+                fetch(apiUrl, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                        
+
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayNews(data.articles);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+
+        }
+
+        function displayNews(articles) {
+            const container = document.getElementById('news-container');
+            articles.forEach(article => {
+                const elem = document.createElement('div');
+                elem.classList.add('article');
+                elem.innerHTML = `
+                    <img src="${article.urlToImage}" alt="Article Image" class="article-image">
+                    <h2 class="article-title">${article.title}</h2>
+                    <p class="article-description">${article.description || 'No description available.'}</p>
+                    <a href="${article.url}" target="_blank" class="article-link">Read more</a>
+                `;
+                container.appendChild(elem);
+            });
+        }
+
+        fetchNews();
+    </script>
+</body>
+</html>
