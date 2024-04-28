@@ -1,5 +1,5 @@
-// fetchNews.js
-const fetch = require("node-fetch");
+// Use dynamic import for fetch instead of require
+import fetch from 'node-fetch';
 
 exports.handler = async function(event, context) {
     const API_URL = "https://newsapi.org/v2/top-headlines?country=us&apiKey=5ff6da31ba214f1285962596a3670a8b";
