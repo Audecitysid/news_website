@@ -7,24 +7,28 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: url('https://i.postimg.cc/08zzTg2L/javier-miranda-Al-J9-TQqe-CV0-unsplash-1.jpg') no-repeat center center fixed;
+            background-size: cover; /* Cover the entire page */
+            min-height: 100vh;
             padding: 20px;
             display: flex;
+            align-items: center;
             justify-content: center;
+            color: #fff; /* Default text color set to white */
         }
         #news-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Automatically fill the space and adjust based on content width */
             gap: 20px;
-            max-width: 1200px;
             width: 100%;
+            max-width: 1200px;
         }
         .article {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8); /* Slightly more opaque for better readability */
             color: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
         .article-image {
             width: 100%;
