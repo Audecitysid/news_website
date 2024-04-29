@@ -10,11 +10,29 @@
             background: url('https://i.postimg.cc/08zzTg2L/javier-miranda-Al-J9-TQqe-CV0-unsplash-1.jpg') no-repeat center center fixed;
             background-size: cover; /* Cover the entire page */
             min-height: 100vh;
-            padding: 20px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             color: #fff; /* Default text color set to white */
+            padding: 0;
+            margin: 0;
+        }
+        #navbar {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .nav-link {
+            margin: 0 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+        .nav-link.active {
+            color: red;
         }
         #news-container {
             display: grid;
@@ -22,9 +40,10 @@
             gap: 20px;
             max-width: 1200px;
             width: 100%;
+            padding: 20px;
         }
         .article {
-            background: rgba(0, 0, 0, 0.8); /* Slightly more opaque for better readability */
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -56,6 +75,14 @@
     </style>
 </head>
 <body>
+    <div id="navbar">
+        <a href="#" class="nav-link active">Latest</a>
+        <a href="#" class="nav-link">World</a>
+        <a href="#" class="nav-link">US</a>
+        <a href="#" class="nav-link">Europe</a>
+        <a href="#" class="nav-link">Sports</a>
+        <a href="#" class="nav-link">Culture</a>
+    </div>
     <div id="news-container"></div>
 
     <script>
