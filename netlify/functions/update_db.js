@@ -14,7 +14,7 @@ exports.handler = async function(event, context) {
     const response = await axios.get(API_URL);
     const articles = response.data.articles.map(article => ({
       ...article,
-      _id: article.url  // Set the article URL as the MongoDB document _id
+      _id: article.publishedAt  // Set the article time as the MongoDB document _id
     }));
 
     // Connect to the MongoDB database
