@@ -115,6 +115,7 @@
         function displayNews(articles) {
             const container = document.getElementById('news-container');
             articles.forEach(article => {
+                if(article.title !== "[Removed]"){
                 const elem = document.createElement('div');
                 elem.classList.add('article');
                 elem.innerHTML = `
@@ -130,7 +131,9 @@
                 toggleBtn.addEventListener('click', () => {
                     elem.classList.toggle('expanded');
                     toggleBtn.textContent = elem.classList.contains('expanded') ? '▲' : '▼';
+                    
                 });
+            }
             });
         }
 
