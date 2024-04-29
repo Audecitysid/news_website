@@ -3,7 +3,7 @@ const axios = require('axios');
 
 exports.handler = async function(event, context) {
   const updateDbUrl = `${process.env.URL}/.netlify/functions/update_db`;
-  //axios.post(updateDbUrl);
+  await axios.post(updateDbUrl);
 
   const API_URL = "https://newsapi.org/v2/top-headlines?country=us&apiKey=5ff6da31ba214f1285962596a3670a8b";
   console.log("API request made");
