@@ -36,12 +36,17 @@
             color: red;
         }
         #news-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* Four boxes in a row */
-            gap: 20px;
-            max-width: 1200px;
+            column-count: 4;
+            column-gap: 20px;
             width: 100%;
+            max-width: 1200px;
             padding: 20px;
+        }
+        .article-container {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            display: inline-block;
+            width: 100%;
         }
         .article {
             background: rgba(0, 0, 0, 0.8);
@@ -49,19 +54,12 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
-            height: 200px;
-            transition: height 0.3s ease;
             position: relative;
-        }
-        .article.expanded {
-            height: auto; /* Expands to show full content */
         }
         .article-image {
             width: 100%;
-            max-height: 120px; /* Adjust size as needed */
+            max-height: 120px;
             object-fit: cover;
             border-radius: 5px;
         }
@@ -73,21 +71,12 @@
             font-size: 16px;
             margin-top: 5px;
         }
-        .article-link, .toggle-btn {
+        .article-link {
             margin-top: 10px;
             text-decoration: none;
             color: #1a0dab;
             cursor: pointer;
             display: block;
-        }
-        .toggle-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
         }
     </style>
 </head>
@@ -115,25 +104,21 @@
         function displayNews(articles) {
             const container = document.getElementById('news-container');
             articles.forEach(article => {
-                if(article.title !== "[Removed]"){
-                const elem = document.createElement('div');
-                elem.classList.add('article');
-                elem.innerHTML = `
-                    <img src="${article.urlToImage}" alt="Article Image" class="article-image">
-                    <h2 class="article-title">${article.title}</h2>
-                    <p class="article-description">${article.description || 'No description available.'}</p>
-                    <a href="${article.url}" target="_blank" class="article-link">Read more</a>
-                    <button class="toggle-btn">▼</button>
-                `;
-                container.appendChild(elem);
+                if(article.title !== "[Removed]") {
+                    const articleContainer = document.createElement('div');
+                    articleContainer.className = 'article-container';
 
-                const toggleBtn = elem.querySelector('.toggle-btn');
-                toggleBtn.addEventListener('click', () => {
-                    elem.classList.toggle('expanded');
-                    toggleBtn.textContent = elem.classList.contains('expanded') ? '▲' : '▼';
-                    
-                });
-            }
+                    const elem = document.createElement('div');
+                    elem.className = 'article';
+                    elem.innerHTML = `
+                        <img src="${article.urlToImage}" alt="Article Image" class="article-image">
+                        <h2 class="article-title">${article.title}</h2>
+                        <p class="article-description">${article.description || 'No description available.'}</p>
+                        <a href="${article.url}" target="_blank" class="article-link">Read more</a>
+                    `;
+                    articleContainer.appendChild(elem);
+                    container.appendChild(articleContainer);
+                }
             });
         }
 
