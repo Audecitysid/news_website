@@ -12,7 +12,10 @@ exports.handler = async function(event, context) {
   try {
     // Fetch news articles from the API
     const response = await axios.get(API_URL);
-    const articles = response.data.articles;
+    const articles = response.data.articles.map(article => ({
+      ...article,
+      _id: article.url  // Set the article URL as the MongoDB document _id
+    }));
 
     // Connect to the MongoDB database
     const { db } = await connectToDatabase();
@@ -20,7 +23,7 @@ exports.handler = async function(event, context) {
 
     // Insert fetched articles into the database
     // Using insertMany to insert all articles at once
-    const insertResult = await collection.insertMany(articles);
+    const insertResult = await collection.insertMany(articles , { ordered: false });
 
     // Return success response with details of the inserted documents
     return {
