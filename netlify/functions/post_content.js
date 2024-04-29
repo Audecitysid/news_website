@@ -17,7 +17,7 @@ exports.handler = async function(event, context) {
                 if (user && user.password === data.password) { // Simplified: ALWAYS hash passwords in production
                     return { statusCode: 200, body: JSON.stringify({ message: 'Login successful' }) };
                 }
-                return { statusCode: 403, body: JSON.stringify({ message: 'Login failed' }) };
+                return { statusCode: 403, body: JSON.stringify({ message: 'user id or password is wrong' }) };
 
             case 'signup':
                 // Insert new user data

@@ -136,7 +136,6 @@
         </div>
     </div>
     
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.querySelector('.login-form form');
@@ -158,8 +157,16 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Login response:', data);
+                    if (data.message === 'Login successful') {
+                        window.location.href = '/demo_news.html'; // Redirect to news page
+                    } else {
+                        alert('Login failed: ' + data.message); // Show error message
+                    }
                 })
-                .catch(error => console.error('Error logging in:', error));
+                .catch(error => {
+                    console.error('Error logging in:', error);
+                    alert('Login error: ' + error.message);
+                });
     
             });
     
@@ -184,11 +191,21 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Signup response:', data);
+                    if (data.message === 'Signup successful') {
+                        alert('Signup successful! Redirecting...');
+                        window.location.href = '/demo_news.html'; // Redirect to news page or a welcome page
+                    } else {
+                        alert('Signup failed: ' + data.message); // Show error message
+                    }
                 })
-                .catch(error => console.error('Error signing up:', error));
+                .catch(error => {
+                    console.error('Error signing up:', error);
+                    alert('Signup error: ' + error.message);
+                });
             });
         });
     </script>
+    
     
     
 </body>
