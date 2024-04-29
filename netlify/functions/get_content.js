@@ -7,7 +7,7 @@ exports.handler = async function(event, context) {
 
   try {
     const response = await axios.get(API_URL);
-    console.log(response.data);
+    
     return {
       statusCode: 200,
       body: JSON.stringify(response.data)

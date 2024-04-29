@@ -135,22 +135,34 @@
             </form>
         </div>
     </div>
+    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Event listener for the login form
             const loginForm = document.querySelector('.login-form form');
             loginForm.addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent the form from submitting normally
                 const loginEmail = document.getElementById('login-email').value;
                 const loginPassword = document.getElementById('login-password').value;
     
-                console.log('Login Email:', loginEmail);
-                console.log('Login Password:', loginPassword);
+                // Send login data to the serverless function
+                fetch('/.netlify/functions/post_content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'login',
+                        email: loginEmail,
+                        password: loginPassword
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Login response:', data);
+                })
+                .catch(error => console.error('Error logging in:', error));
     
-                // You can do something with these variables here
             });
     
-            // Event listener for the signup form
             const signupForm = document.querySelector('.signup-form form');
             signupForm.addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent the form from submitting normally
@@ -158,14 +170,26 @@
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
     
-                console.log('Full Name:', fullName);
-                console.log('Email:', email);
-                console.log('Password:', password);
-    
-                // You can do something with these variables here
+                // Send signup data to the serverless function
+                fetch('/.netlify/functions/post_content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'signup',
+                        fullName: fullName,
+                        email: email,
+                        password: password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Signup response:', data);
+                })
+                .catch(error => console.error('Error signing up:', error));
             });
         });
     </script>
+    
     
 </body>
 </html>
