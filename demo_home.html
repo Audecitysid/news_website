@@ -15,12 +15,30 @@
             color: #fff;
             margin: 0;
         }
-        #navbar {
-            background: rgba(0, 0, 0, 0.85);
-            padding: 10px 0;
+
+        #title-bar {
+
+
+            background: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+            color: white;
             width: 100%;
             position: sticky;
             top: 0;
+            z-index: 1015; /* Ensure it's above the navbar but below modal overlays if any */
+            padding: 10px 0; /* Padding for better visual spacing */
+            font-size: 20px; /* Increase font size for visibility */
+            height: 45px;
+        }
+
+
+
+
+        #navbar {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 0;
+            width: 100%;
+            position: sticky;
+            top: 40px;
             z-index: 1010;
             
         }
@@ -41,26 +59,28 @@
             z-index: 1010;
             color: white;
             user-select: none;
-        }
-        #user-id {
+        }#site-name {
             cursor: pointer;
             font-weight: bold;
-            position: absolute;
-            left: 50px;
-            top: 10px;
             z-index: 1010;
+            color: white; /* Default color */
+            
+        }
+        #site-name:hover {
+            color: red; /* Color changes to red on hover */
+            
         }
         #sidebar {
             position: fixed;
-            left: -200px;
-            top: 40;
+            left: -200px; /* Start offscreen */
+            top: 45px; /* Set below the title bar */
             width: 200px;
-            height: 100vh;
+            height: calc(100vh - 45px); /* Adjust height to not overlap title bar */
             background: rgba(0, 0, 0, 0.5);
             padding: 20px;
             transition: left 0.3s;
             overflow-y: auto;
-            z-index: 1005;
+            z-index: 1010;
         }
         #sidebar:hover {
             box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.2);
@@ -86,12 +106,12 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             transform: scale(1);
         }
         .article:hover {
             background: rgba(27, 26, 26, 0.8);
-            transform: scale(1.03);
+            transform: scale(1.025);
             
             
             
@@ -120,9 +140,18 @@
     </style>
 </head>
 <body class="antialiased">
-    <div id="navbar" class="d-flex justify-content-center align-items-center">
+    <div id="title-bar" class="text-center p-2 align-items-center">
+        
         <div id="hamburger">&#9776;</div>
-        <div id="user-id">User ID</div>
+        
+        <div id = "site-name">Spectrum News</div>
+        
+
+    </div>
+
+    <div id="navbar" class="d-flex justify-content-center align-items-center">
+        
+        
         <a href="#" class="nav-link px-3">Latest</a>
         <a href="#" class="nav-link px-3">World</a>
         <a href="#" class="nav-link px-3 active">US</a>
@@ -142,7 +171,7 @@
     <script>
         document.getElementById('hamburger').addEventListener('click', () => {
             const sidebar = document.getElementById('sidebar');
-            sidebar.style.left = sidebar.style.left === '0px' ? '-300px' : '0px';
+            sidebar.style.left = sidebar.style.left === '0px' ? '-200px' : '0px';
         });
 
         function fetchNews() {
@@ -164,7 +193,7 @@
                     const elem = document.createElement('div');
                     elem.className = 'article';
                     elem.innerHTML = `
-                        <img src="${article.urlToImage}" alt="Article Image" class="article-image">
+                        <img src="${article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg'}" class="article-image">
                         <h2 class="article-title">${article.title}</h2>
                         <p class="article-description">${article.description || 'No description available.'}</p>
                         <a href="${article.url}" target="_blank" class="article-link">Read more</a>
