@@ -18,7 +18,8 @@
 
         #title-bar {
 
-
+            display: flex;
+            
             background: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
             color: white;
             width: 100%;
@@ -27,10 +28,84 @@
             z-index: 1015; /* Ensure it's above the navbar but below modal overlays if any */
             padding: 10px 0; /* Padding for better visual spacing */
             font-size: 20px; /* Increase font size for visibility */
-            height: 45px;
+            height: 50px;
         }
 
+        
+        #hamburger {
+            
+            cursor: pointer;
+            font-size: 18px;            
+            padding-left: 10px;
+            padding-top: 0px;
+            z-index: 1010;
+            color: white;
+            user-select: none;
+        }
 
+        #site-name {
+            
+            margin-left: 15px; /* Additional space from left if needed */
+            cursor: pointer;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 20px;
+            transform : translateY(-10%);
+            z-index: 1010;
+            color: white; /* Default color */
+            
+        }
+        #site-name:hover {
+            color: red; /* Color changes to red on hover */
+            
+        }
+        
+        #search-box {
+            display: flex; /* Aligns the input and button side by side */
+            align-items: center;
+            position: absolute;
+            left: 50%; /* Positions halfway across the container */
+            transform: translateX(-50%); /* Centers exactly at the middle */
+            
+            
+        }
+
+        #search-input {
+            padding: 6px 20px;
+            font-size: 12px;
+            border: 0.5px solid #969494;
+            width: 400px;
+            
+            background: rgba(0, 0, 0, 0.03); /* Semi-transparent white background */
+
+            color: white; /* White text color */
+            border-right: none; /* Removes the border between the input and the button */
+            border-radius: 20px 0 0 20px;
+
+        }
+
+        #search-button {
+            padding: 6px 20px;
+            font-size: 12px;
+            background-color: rgba(0, 0, 0, 0.03); /* Semi-transparent white background */
+            border-radius: 0 20px 20px 0; /* Rounded corners on the right side */
+
+
+            color: #ffffff; /* Black text color */
+            border: 0.5px solid #969494; /* Consistent border */
+            cursor: pointer;
+        }
+
+        #search-input:focus, #search-button:focus {
+            outline: none; /* Removes the outline on focus */
+        }
+
+        
+        
+        #account-info{
+            position: absolute;
+            right: 10px;
+            font-size: 18px;
+        }
 
 
         #navbar {
@@ -49,26 +124,6 @@
         .nav-link:hover, .nav-link.active {
             color: red;
             text-decoration: none;
-        }
-        #hamburger {
-            cursor: pointer;
-            font-size: 24px;
-            position: absolute;
-            left: 10px;
-            top: 5px;
-            z-index: 1010;
-            color: white;
-            user-select: none;
-        }#site-name {
-            cursor: pointer;
-            font-weight: bold;
-            z-index: 1010;
-            color: white; /* Default color */
-            
-        }
-        #site-name:hover {
-            color: red; /* Color changes to red on hover */
-            
         }
         #sidebar {
             position: fixed;
@@ -140,11 +195,18 @@
     </style>
 </head>
 <body class="antialiased">
-    <div id="title-bar" class="text-center p-2 align-items-center">
+    <div id="title-bar" class = "title-bar-class">
         
         <div id="hamburger">&#9776;</div>
         
         <div id = "site-name">Spectrum News</div>
+
+        <div id = "search-box">
+            <input type="text" placeholder="Type something.." id="search-input" />
+            <button id="search-button">SEARCH</button>
+        </div>
+
+        <div id = "account-info">Account info / signup box</div>
         
 
     </div>
@@ -169,10 +231,46 @@
     <div id="news-container"></div>
 
     <script>
+
+        document.getElementById('search-button').addEventListener('click', function() {
+            var searchTerm = document.getElementById('search-input').value;
+            console.log('Searching for:', searchTerm);
+
+            document.getElementById('news-container').innerHTML = ''; // clearing the page
+
+
+
+            // Implement your search logic here
+
+
+            fetch('/.netlify/functions/functionality', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'search',
+                        q_term: searchTerm,
+                        uid: 'sample_uid'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayNews(data.articles);
+                    console.log("total results : "+data.totalResults);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+            
+
+        });
+
+
+
+
         document.getElementById('hamburger').addEventListener('click', () => {
             const sidebar = document.getElementById('sidebar');
             sidebar.style.left = sidebar.style.left === '0px' ? '-200px' : '0px';
         });
+
+        document.getElementById('site-name').addEventListener('click', function() { window.location.reload();  });
 
         function fetchNews() {
             fetch('/.netlify/functions/get_content')
