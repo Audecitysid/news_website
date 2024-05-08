@@ -100,6 +100,19 @@
         }
 
         
+        #signup-button {
+            padding: 6px 20px;
+            font-size: 12px;
+            background-color: rgba(0, 0, 0, 0.03); /* Semi-transparent white background */
+            border-radius: 20px 20px 20px 20px; /* Rounded corners on the right side */
+
+
+            color: #ffffff; /* Black text color */
+            border: 0.5px solid #969494; /* Consistent border */
+            cursor: pointer;
+        }
+
+        
         
         #account-info{
             position: absolute;
@@ -122,6 +135,7 @@
             transition: color 0.3s;
         }
         .nav-link:hover, .nav-link.active {
+            cursor: pointer;
             color: red;
             text-decoration: none;
         }
@@ -206,7 +220,7 @@
             <button id="search-button">SEARCH</button>
         </div>
 
-        <div id = "account-info">Account info / signup box</div>
+        <div id = "account-info"><button id="signup-button"></button></div>
         
 
     </div>
@@ -214,12 +228,12 @@
     <div id="navbar" class="d-flex justify-content-center align-items-center">
         
         
-        <a href="#" class="nav-link px-3">Latest</a>
-        <a href="#" class="nav-link px-3">World</a>
-        <a href="#" class="nav-link px-3 active">US</a>
-        <a href="#" class="nav-link px-3">Europe</a>
-        <a href="#" class="nav-link px-3">Sports</a>
-        <a href="#" class="nav-link px-3">Culture</a>
+        <a id = "in" class="nav-link px-3">India</a>
+        <a id = "ca" class="nav-link px-3">World</a>
+        <a id = "us" class="nav-link px-3">US</a>
+        <a id = "gb" class="nav-link px-3">Europe</a>
+        <a id = "sports" class="nav-link px-3">Sports</a>
+        <a id = "culture" class="nav-link px-3">Culture</a>
     </div>
     <div id="sidebar">
         <h4 class="text-white mb-4">Menu</h4>
@@ -227,24 +241,36 @@
         <a href="#" class="nav-link text-white d-block mb-2">History</a>
         <a href="#" class="nav-link text-white d-block mb-2">Saved Articles</a>
         <a href="#" class="nav-link text-white d-block mb-2">Settings</a>
+        <a id = "logout" class="nav-link text-white d-block mb-2">Log Out</a>
     </div>
     <div id="news-container"></div>
 
     <script>
 
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup event listeners for each navbar item
+            document.getElementById('in').addEventListener('click', () => fetchNews('in'));
+            document.getElementById('us').addEventListener('click', () => fetchNews('us'));
+            document.getElementById('ca').addEventListener('click', () => fetchNews('ca'));
+            document.getElementById('gb').addEventListener('click', () => fetchNews('gb'));
+            document.getElementById('sports').addEventListener('click', () => fetchNews_catagory('in' ,'sports'));
+            document.getElementById('culture').addEventListener('click', () => fetchNews_catagory('in', 'entertainment' ));
+            document.getElementById('logout').addEventListener('click', () => logout());
+
+            
+        });
+
+        
+        // search bar functionality
         document.getElementById('search-button').addEventListener('click', function() {
             var searchTerm = document.getElementById('search-input').value;
             console.log('Searching for:', searchTerm);
 
-            document.getElementById('news-container').innerHTML = ''; // clearing the page
-
-
-
-            // Implement your search logic here
-
-
+            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // clearing the page
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         type: 'search',
@@ -264,7 +290,7 @@
 
 
 
-
+        // side bar (hamburger menu) functionality
         document.getElementById('hamburger').addEventListener('click', () => {
             const sidebar = document.getElementById('sidebar');
             sidebar.style.left = sidebar.style.left === '0px' ? '-200px' : '0px';
@@ -272,8 +298,20 @@
 
         document.getElementById('site-name').addEventListener('click', function() { window.location.reload();  });
 
-        function fetchNews() {
-            fetch('/.netlify/functions/get_content')
+        
+        // main function to fetch the news on page loading 
+        function fetchNews(region) {
+            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // clearing the page
+            fetch('/.netlify/functions/functionality', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'country',
+                        country: region,
+                        
+                    })
+                })
                 .then(response => response.json())
                 .then(data => {
                     displayNews(data.articles);
@@ -281,7 +319,35 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
 
+        // fetch news by category...
+
+        function fetchNews_catagory(region , c_type) {
+            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // clearing the page
+            fetch('/.netlify/functions/functionality', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'category',
+                        country: region,
+                        category: c_type,
+                        
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayNews(data.articles);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+
+
+
+        // general purpose function to populate the waterfall containers with whatever data is fetched
+
         function displayNews(articles) {
+            document.getElementById('news-container').innerHTML = ''; // clearing the page
             const container = document.getElementById('news-container');
             articles.forEach(article => {
                 if (article.title !== "[Removed]") {
@@ -302,7 +368,77 @@
             });
         }
 
-        fetchNews();
+        
+        function authenticate() {                    
+                    fetch('/.netlify/functions/functionality', {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'auth',
+                                
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.userDetails){
+
+                                console.log("verified : " + data.userDetails);
+                                // display the name in signup button
+                                document.getElementById('signup-button').innerHTML = '<div>' + data.userDetails + '</div>';
+                                fetchNews('us');
+                            }
+                            else{
+
+                                window.location.href = '/index.html';
+
+                            }
+                            
+
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                        
+
+                
+                }
+
+        function logout(){
+            fetch('/.netlify/functions/rough', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'logout'                        
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('response:', data.message);
+                    alert(data.message)
+                    window.location.reload();
+                    
+                })
+                .catch(error => {
+                    console.error('Error in:', error);
+                    alert('error: ' + error.message);
+                });
+        }
+
+
+        // checks if the cookies are present otherwise reloads right away
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.cookie === "") {
+                // No cookies available, redirect to login page
+                window.location.href = '/index.html';
+            } else {
+                // Cookies exist, continue with page logic
+                console.log("Cookies are available:", document.cookie);
+                authenticate();
+                
+            }
+        });
+
+        
     </script>
 </body>
 </html>

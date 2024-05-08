@@ -11,7 +11,7 @@ exports.handler = async function(event, context) {
 
         switch (data.type) {
             case 'login':
-                // Perform login logic, e.g., verify user
+                
                 // This would typically involve finding the user and comparing hashed passwords
                 const user = await collection.findOne({ email: data.email });
                 if (user && user.password === data.password) { // Simplified: ALWAYS hash passwords in production

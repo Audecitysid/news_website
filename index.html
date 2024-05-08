@@ -145,7 +145,7 @@
                 const loginPassword = document.getElementById('login-password').value;
     
                 // Send login data to the serverless function
-                fetch('/.netlify/functions/post_content', {
+                fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -158,8 +158,9 @@
                 .then(data => {
                     console.log('Login response:', data);
                     if (data.message === 'Login successful') {
-                        window.location.href = '/demo_news.html'; // Redirect to news page
+                        window.location.href = '/demo_home.html'; // Redirect to news page
                     } else {
+                        console.log(data.message);
                         alert('Login failed: ' + data.message); // Show error message
                     }
                 })
@@ -178,7 +179,7 @@
                 const password = document.getElementById('password').value;
     
                 // Send signup data to the serverless function
-                fetch('/.netlify/functions/post_content', {
+                fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -192,8 +193,8 @@
                 .then(data => {
                     console.log('Signup response:', data);
                     if (data.message === 'Signup successful') {
-                        alert('Signup successful! Redirecting...');
-                        window.location.href = '/demo_news.html'; // Redirect to news page or a welcome page
+                        alert('Signup successful! Now please login');
+                        
                     } else {
                         alert('Signup failed: ' + data.message); // Show error message
                     }
