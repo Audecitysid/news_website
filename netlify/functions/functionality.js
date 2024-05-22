@@ -19,11 +19,6 @@ exports.handler = async function(event, context) {
 
         /* log the user data to database */
 
-
-
-
-        
-
         switch (data.type) {
             case 'search':
                 try {
