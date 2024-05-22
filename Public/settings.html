@@ -17,7 +17,9 @@
         }
 
         #title-bar {
+
             display: flex;
+            
             background: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
             color: white;
             width: 100%;
@@ -29,7 +31,9 @@
             height: 50px;
         }
 
+        
         #hamburger {
+            
             cursor: pointer;
             font-size: 18px;            
             padding-left: 10px;
@@ -40,6 +44,7 @@
         }
 
         #site-name {
+            
             margin-left: 15px; /* Additional space from left if needed */
             cursor: pointer;
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -47,17 +52,21 @@
             transform : translateY(-10%);
             z-index: 1010;
             color: white; /* Default color */
+            
         }
         #site-name:hover {
             color: red; /* Color changes to red on hover */
+            
         }
-
+        
         #search-box {
             display: flex; /* Aligns the input and button side by side */
             align-items: center;
             position: absolute;
             left: 50%; /* Positions halfway across the container */
             transform: translateX(-50%); /* Centers exactly at the middle */
+            
+            
         }
 
         #search-input {
@@ -65,10 +74,13 @@
             font-size: 12px;
             border: 0.5px solid #969494;
             width: 400px;
+            
             background: rgba(0, 0, 0, 0.03); /* Semi-transparent white background */
+
             color: white; /* White text color */
             border-right: none; /* Removes the border between the input and the button */
             border-radius: 20px 0 0 20px;
+
         }
 
         #search-button {
@@ -76,6 +88,8 @@
             font-size: 12px;
             background-color: rgba(0, 0, 0, 0.03); /* Semi-transparent white background */
             border-radius: 0 20px 20px 0; /* Rounded corners on the right side */
+
+
             color: #ffffff; /* Black text color */
             border: 0.5px solid #969494; /* Consistent border */
             cursor: pointer;
@@ -85,21 +99,27 @@
             outline: none; /* Removes the outline on focus */
         }
 
+        
         #signup-button {
             padding: 6px 20px;
             font-size: 12px;
             background-color: rgba(0, 0, 0, 0.03); /* Semi-transparent white background */
             border-radius: 20px 20px 20px 20px; /* Rounded corners on the right side */
+
+
             color: #ffffff; /* Black text color */
             border: 0.5px solid #969494; /* Consistent border */
             cursor: pointer;
         }
 
-        #account-info {
+        
+        
+        #account-info{
             position: absolute;
             right: 10px;
             font-size: 18px;
         }
+
 
         #navbar {
             background: rgba(0, 0, 0, 0.4);
@@ -108,6 +128,7 @@
             position: sticky;
             top: 40px;
             z-index: 1010;
+            
         }
         .nav-link {
             color: white;
@@ -140,6 +161,7 @@
             width: 100%;
             max-width: 1200px;
         }
+        
         .article-container {
             break-inside: avoid;
             margin-bottom: 20px;
@@ -159,6 +181,9 @@
         .article:hover {
             background: rgba(27, 26, 26, 0.8);
             transform: scale(1.025);
+            
+            
+            
         }
         .article-image {
             width: 100%;
@@ -167,6 +192,7 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
         .article-link {
             margin-top: 10px;
             display: inline-block;
@@ -178,36 +204,36 @@
             margin-top: 5px;
             color: rgba(128, 128, 128, 0.8); /* Gray with some transparency */
         }
-        .like-button, .dislike-button, .save-button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-        }
-        .like-button:hover, .dislike-button:hover {
-            color: #ab0d0d;
-        }
+
+        
     </style>
 </head>
 <body class="antialiased">
-    <div id="title-bar" class="title-bar-class">
+    <div id="title-bar" class = "title-bar-class">
+        
         <div id="hamburger">&#9776;</div>
-        <div id="site-name">Spectrum News</div>
-        <div id="search-box">
+        
+        <div id = "site-name">Spectrum News</div>
+
+        <div id = "search-box">
             <input type="text" placeholder="Type something.." id="search-input" />
             <button id="search-button">SEARCH</button>
         </div>
-        <div id="account-info"><button id="signup-button"><div id="user_name" style="display: inline;"></div></button></div>
+
+        <div id = "account-info"><button id="signup-button"><div id = "user_name" style="display: inline;" ></div></button></div>
+        
+
     </div>
+
     <div id="navbar" class="d-flex justify-content-center align-items-center">
-        <a id="in" class="nav-link px-3">India</a>
-        <a id="ca" class="nav-link px-3">World</a>
-        <a id="us" class="nav-link px-3">US</a>
-        <a id="gb" class="nav-link px-3">Europe</a>
-        <a id="sports" class="nav-link px-3">Sports</a>
-        <a id="culture" class="nav-link px-3">Culture</a>
+        
+        
+        <a id = "in" class="nav-link px-3">India</a>
+        <a id = "ca" class="nav-link px-3">World</a>
+        <a id = "us" class="nav-link px-3">US</a>
+        <a id = "gb" class="nav-link px-3">Europe</a>
+        <a id = "sports" class="nav-link px-3">Sports</a>
+        <a id = "culture" class="nav-link px-3">Culture</a>
     </div>
     <div id="sidebar">
         <h4 class="text-white mb-4">Menu</h4>
@@ -215,11 +241,13 @@
         <a href="#" class="nav-link text-white d-block mb-2">History</a>
         <a href="#" class="nav-link text-white d-block mb-2">Saved Articles</a>
         <a href="#" class="nav-link text-white d-block mb-2">Settings</a>
-        <a id="logout" class="nav-link text-white d-block mb-2">Log Out</a>
+        <a id = "logout" class="nav-link text-white d-block mb-2">Log Out</a>
     </div>
     <div id="news-container"></div>
 
     <script>
+
+
         document.addEventListener('DOMContentLoaded', function() {
             // Setup event listeners for each navbar item
             document.getElementById('in').addEventListener('click', () => fetchNews('in'));
@@ -227,17 +255,19 @@
             document.getElementById('ca').addEventListener('click', () => fetchNews('ca'));
             document.getElementById('gb').addEventListener('click', () => fetchNews('gb'));
             document.getElementById('sports').addEventListener('click', () => fetchNews_catagory('in' ,'sports'));
-            document.getElementById('culture').addEventListener('click', () => fetchNews_catagory('in', 'entertainment'));
+            document.getElementById('culture').addEventListener('click', () => fetchNews_catagory('in', 'entertainment' ));
             document.getElementById('logout').addEventListener('click', () => logout());
+
+            
         });
 
-        // Search bar functionality
+        
+        // search bar functionality
         document.getElementById('search-button').addEventListener('click', function() {
             var searchTerm = document.getElementById('search-input').value;
             console.log('Searching for:', searchTerm);
-            searchArticle_log(searchTerm , 'null');
 
-            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
+            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // clearing the page
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
@@ -251,22 +281,33 @@
                 .then(response => response.json())
                 .then(data => {
                     displayNews(data.articles);
-                    console.log("Total results: " + data.totalResults);
+                    console.log("total results : "+data.totalResults);
                 })
                 .catch(error => console.error('Error fetching data:', error));
+            
+
         });
 
-        // Side bar (hamburger menu) functionality
+        /*
+        // 
+        
+        */
+        
+
+
+
+        // side bar (hamburger menu) functionality
         document.getElementById('hamburger').addEventListener('click', () => {
             const sidebar = document.getElementById('sidebar');
             sidebar.style.left = sidebar.style.left === '0px' ? '-200px' : '0px';
         });
 
-        document.getElementById('site-name').addEventListener('click', function() { window.location.reload(); });
+        document.getElementById('site-name').addEventListener('click', function() { window.location.reload();  });
 
-        // Main function to fetch the news on page loading 
+        
+        // main function to fetch the news on page loading 
         function fetchNews(region) {
-            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
+            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // clearing the page
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
@@ -274,6 +315,7 @@
                     body: JSON.stringify({
                         type: 'country',
                         country: region,
+                        
                     })
                 })
                 .then(response => response.json())
@@ -283,9 +325,10 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
 
-        // Fetch news by category
-        function fetchNews_catagory(region, c_type) {
-            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
+        // fetch news by category...
+
+        function fetchNews_catagory(region , c_type) {
+            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // clearing the page
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
@@ -294,6 +337,7 @@
                         type: 'category',
                         country: region,
                         category: c_type,
+                        
                     })
                 })
                 .then(response => response.json())
@@ -303,119 +347,68 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
 
-        // General purpose function to populate the waterfall containers with whatever data is fetched
+
+
+
+        // general purpose function to populate the waterfall containers with whatever data is fetched
+
         function displayNews(articles) {
-    document.getElementById('news-container').innerHTML = ''; // Clearing the page
-    const container = document.getElementById('news-container');
-    articles.forEach(article => {
-        if (article.title !== "[Removed]") {
-            const articleContainer = document.createElement('div');
-            articleContainer.className = 'article-container';
+            document.getElementById('news-container').innerHTML = ''; // clearing the page
+            const container = document.getElementById('news-container');
+            articles.forEach(article => {
+                if (article.title !== "[Removed]") {
+                    const articleContainer = document.createElement('div');
+                    articleContainer.className = 'article-container';
 
-            const elem = document.createElement('div');
-            elem.className = 'article';
-
-            // Escape the title to avoid syntax errors
-            const escapedTitle = article.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
-
-            elem.innerHTML = `
-                <img src="${article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg'}" class="article-image">
-                <h2 class="article-title">${article.title}</h2>
-                <p class="article-description">${article.description || 'No description available.'}</p>
-                <p class="article-time">${article.publishedAt}</p>
-                
-                <button class="like-button" onclick="readArticle('${escapedTitle}', '${article.publishedAt}')"> <a href="${article.url}" target="_blank" class="article-link">Read more</a></button>
-                <div>
-                    <button class="like-button" onclick="likeArticle('${escapedTitle}', '${article.publishedAt}')">👍 Like</button>
-                    <button class="dislike-button" onclick="dislikeArticle('${escapedTitle}' , '${article.publishedAt}')">👎 Dislike</button>
-                    <button class="save-button" onclick="saveArticle('${escapedTitle}', '${article.publishedAt}')">💾 Save</button>
-                </div>
-            `;
-            articleContainer.appendChild(elem);
-            container.appendChild(articleContainer);
-        }
-    });
-}
-
-
-
-        // action log buttons functionality
-        function likeArticle(title , publish_time) {
-            
-            console.log(publish_time);
-            log_actions('Like Article ' , title , publish_time );
-
+                    const elem = document.createElement('div');
+                    elem.className = 'article';
+                    elem.innerHTML = `
+                        <img src="${article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg'}" class="article-image">
+                        <h2 class="article-title">${article.title}</h2>
+                        <p class="article-description">${article.description || 'No description available.'}</p>
+                        <a href="${article.url}" target="_blank" class="article-link">Read more</a>
+                    `;
+                    articleContainer.appendChild(elem);
+                    container.appendChild(articleContainer);
+                }
+            });
         }
 
-        function dislikeArticle(title , publish_time) {
-            
-            log_actions('Dislike Article ' , title , publish_time );
-            
-        }
-
-        function saveArticle(title , publish_time) {
-
-            log_actions('Save Article ' , title , publish_time);
-            alert('article saved :)');
-        }
-
-        function readArticle(title , publish_time) {
-
-            log_actions('Read Article ' , title , publish_time)
-            
-        }
-
-        function searchArticle_log(title , publish_time){
-            log_actions('Search Article' , title , publish_time)
-        }
-
-
-        // will use this for registering likes, dislikes, read more , saved articles
-        function log_actions(action_t, article_t , p_time) {
-            fetch('/.netlify/functions/functionality', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'log',
-                        action_type: action_t,
-                        article_title: article_t ,
-                        article_time: p_time
-
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('action logged successfully');
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-
+        
         function authenticate() {                    
-            fetch('/.netlify/functions/functionality', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'auth',
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.userDetails) {
-                        console.log("Verified: " + data.userDetails);
-                        // Display the name in signup button
-                        document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';
-                        fetchNews('us');
-                    } else {
-                        window.location.href = '/index.html';
-                    }
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
+                    fetch('/.netlify/functions/functionality', {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'auth',
+                                
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.userDetails){
 
-        function logout() {
+                                console.log("verified : " + data.userDetails);
+                                // display the name in signup button
+                                document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';
+                                fetchNews('us');
+                            }
+                            else{
+
+                                window.location.href = '/index.html';
+
+                            }
+                            
+
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                        
+
+                
+                }
+
+        function logout(){
             fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     credentials: 'include',
@@ -426,17 +419,19 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Response:', data.message);
-                    alert(data.message);
+                    console.log('response:', data.message);
+                    alert(data.message)
                     window.location.reload();
+                    
                 })
                 .catch(error => {
                     console.error('Error in:', error);
-                    alert('Error: ' + error.message);
+                    alert('error: ' + error.message);
                 });
         }
 
-        // Checks if the cookies are present otherwise reloads right away
+
+        // checks if the cookies are present otherwise reloads right away
         document.addEventListener('DOMContentLoaded', function() {
             if (document.cookie === "") {
                 // No cookies available, redirect to login page
@@ -445,8 +440,11 @@
                 // Cookies exist, continue with page logic
                 console.log("Cookies are available:", document.cookie);
                 authenticate();
+                
             }
         });
+
+        
     </script>
 </body>
 </html>

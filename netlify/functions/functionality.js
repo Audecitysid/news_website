@@ -143,6 +143,110 @@ exports.handler = async function(event, context) {
                         body: JSON.stringify({ msg: "Error fetching data from database ", details: error.message })
                     };
                 }
+
+            case 'log' :
+                try{
+
+                    console.log('entered log');
+
+                    // Validate auth token
+                    const { db } = await connectToDatabase();
+                    const user = await db.collection('users').findOne({ email: authToken });
+
+                    if (!user) {
+                        return {
+                            statusCode: 401, // Unauthorized
+                            body: JSON.stringify({ msg: "Auth token is invalid" })
+                        };
+                    }
+
+                    const action_type = data.action_type;
+                    const acticle_title = data.article_title;
+                    const uid = authToken;
+                    const publishedAt = data.article_time;
+                    
+
+                    const logEntry = {
+
+                        email : uid,
+                        action_type,
+                        acticle_title,
+                        publishedAt,
+                        timestamp: new Date()
+
+                    }
+                    await db.collection('user_logs').insertOne(logEntry);
+
+                    return {
+                        statusCode: 200,
+                        body: JSON.stringify({ msg: "Action logged successfully" })
+                    };
+
+
+                }catch (error) {
+                    console.error("Error logging action: ", error);
+                    return {
+                        statusCode: error.response?.status || 500,
+                        body: JSON.stringify({ msg: "Error logging action", details: error.message })
+                    };
+                }
+
+            case 'UserList':
+                // add code to retrieve the data from table users and return all the data retrieved to the frontennd
+                try {
+                    const { db } = await connectToDatabase();
+                    const users = await db.collection('users').find({}).toArray();
+                    return {
+                        statusCode: 200,
+                        body: JSON.stringify(users)
+                    };
+                } catch (error) {
+                    console.error("Error fetching user list: ", error);
+                    return {
+                        statusCode: error.response?.status || 500,
+                        body: JSON.stringify({ msg: "Error fetching user list", details: error.message })
+                    };
+                }
+
+
+                case 'deleteUser':
+                // New delete user functionality
+                try {
+                    const { db } = await connectToDatabase();
+                    const userId = data.userId;
+                    await db.collection('users').deleteOne({ email: userId });
+                    //await db.collection('user_logs').deleteMany({ email: userId });
+
+                    return {
+                        statusCode: 200,
+                        body: JSON.stringify({ msg: "User deleted successfully" })
+                    };
+                } catch (error) {
+                    console.error("Error deleting user: ", error);
+                    return {
+                        statusCode: error.response?.status || 500,
+                        body: JSON.stringify({ msg: "Error deleting user", details: error.message })
+                    };
+                }
+
+            case 'viewActivity':
+                // New view activity functionality
+                try {
+                    const { db } = await connectToDatabase();
+                    const userId = data.userId;
+                    const logs = await db.collection('user_logs').find({ email: userId }).toArray();
+                    return {
+                        statusCode: 200,
+                        body: JSON.stringify(logs)
+                    };
+                } catch (error) {
+                    console.error("Error fetching user activity: ", error);
+                    return {
+                        statusCode: error.response?.status || 500,
+                        body: JSON.stringify({ msg: "Error fetching user activity", details: error.message })
+                    };
+                }
+
                 
                     
 
