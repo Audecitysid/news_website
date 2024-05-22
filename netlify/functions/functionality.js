@@ -123,7 +123,7 @@ exports.handler = async function(event, context) {
                             console.log("auth is valid : " + user.fullName + ' ' + user.email);
                             return {
                                 statusCode: 200,
-                                body: JSON.stringify({ msg: "Auth token is valid", userDetails: user.fullName })
+                                body: JSON.stringify({ msg: "Auth token is valid", userDetails: user.fullName , userEmail :  user.email })
                                 
                             };
                         } else {
@@ -234,7 +234,16 @@ exports.handler = async function(event, context) {
                 try {
                     const { db } = await connectToDatabase();
                     const userId = data.userId;
-                    const logs = await db.collection('user_logs').find({ email: userId }).toArray();
+                    
+                    let logs
+
+                    if(userId === 'all'){
+                        logs = await db.collection('user_logs').find().toArray();
+                    }
+                    else{
+                        logs = await db.collection('user_logs').find({ email: userId }).toArray();
+                    }
+
                     return {
                         statusCode: 200,
                         body: JSON.stringify(logs)

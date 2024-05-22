@@ -189,6 +189,34 @@
         .like-button:hover, .dislike-button:hover {
             color: #ab0d0d;
         }
+
+        .translucent-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            
+            margin: 0 auto;
+        }
+
+        .translucent-table th, .translucent-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .translucent-table th {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .translucent-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+
+
     </style>
 </head>
 <body class="antialiased">
@@ -212,7 +240,7 @@
     <div id="sidebar">
         <h4 class="text-white mb-4">Menu</h4>
         <a href="#" class="nav-link text-white d-block mb-2">Profile</a>
-        <a href="#" class="nav-link text-white d-block mb-2">History</a>
+        <a id = "history" class="nav-link text-white d-block mb-2">History</a>
         <a href="#" class="nav-link text-white d-block mb-2">Saved Articles</a>
         <a href="#" class="nav-link text-white d-block mb-2">Settings</a>
         <a id="logout" class="nav-link text-white d-block mb-2">Log Out</a>
@@ -229,6 +257,7 @@
             document.getElementById('sports').addEventListener('click', () => fetchNews_catagory('in' ,'sports'));
             document.getElementById('culture').addEventListener('click', () => fetchNews_catagory('in', 'entertainment'));
             document.getElementById('logout').addEventListener('click', () => logout());
+            document.getElementById('history').addEventListener('click', () => view_history());
         });
 
         // Search bar functionality
@@ -267,6 +296,7 @@
         // Main function to fetch the news on page loading 
         function fetchNews(region) {
             document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
+            fetchNews_log( region , 'null');
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
@@ -286,6 +316,8 @@
         // Fetch news by category
         function fetchNews_catagory(region, c_type) {
             document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
+            fetchNews_log( c_type , 'null');
+
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
@@ -339,7 +371,110 @@
 
 
 
-        // action log buttons functionality
+        function view_history(){                    
+            fetch('/.netlify/functions/functionality', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'auth',
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.userDetails) {
+                        console.log("fetching history for : " + data.userEmail);
+                        userActivity(data.userEmail);
+                        
+                        
+                    } 
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+        function userActivity(userId) {
+                    console.log('Fetching activity for user:', userId);
+                    fetch('/.netlify/functions/functionality', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        type: 'viewActivity', 
+                        userId: userId 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('User activity:', data);
+                    displayActivityLogs(data);
+                    
+                })
+                .catch(error => console.error('Error fetching user activity:', error));
+                }
+
+                function displayActivityLogs(logs) {
+                const tableHTML = `
+                    <table class="translucent-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Action Type</th>
+                                <th>Article Title</th>
+                                <th>Published At</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${logs.map(log => `
+                                <tr>
+                                    <td>${log.email}</td>
+                                    <td>${log.action_type}</td>
+                                    <td>${log.acticle_title}</td>
+                                    <td>${log.publishedAt}</td>
+                                    <td>${log.timestamp}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('news-container').innerHTML = tableHTML;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // action log and auth functionality ########################################################################################
+        
+        function fetchNews_log(title , publish_time) {
+            
+            
+            log_actions('Fetched News ' , title , publish_time );
+
+        }
+
+        function logout_log(title , publish_time){
+
+            log_actions('User Logged out ' , title , publish_time );
+
+        }
+        
+
+        function auth_log(title , publish_time){
+
+            log_actions('User Logged in ' , title , publish_time );
+
+        }
+        
         function likeArticle(title , publish_time) {
             
             console.log(publish_time);
@@ -392,7 +527,8 @@
         }
 
 
-        function authenticate() {                    
+        function authenticate() { 
+                               
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
@@ -407,6 +543,7 @@
                         console.log("Verified: " + data.userDetails);
                         // Display the name in signup button
                         document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';
+                        auth_log(data.userDetails , 'null')
                         fetchNews('us');
                     } else {
                         window.location.href = '/index.html';
@@ -416,6 +553,8 @@
         }
 
         function logout() {
+
+            logout_log( 'null' , 'null');
             fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     credentials: 'include',

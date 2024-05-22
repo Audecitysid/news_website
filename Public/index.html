@@ -158,7 +158,12 @@
                 .then(data => {
                     console.log('Login response:', data);
                     if (data.message === 'Login successful') {
-                        window.location.href = '/demo_home.html'; // Redirect to news page
+                        console.log(loginEmail + "login email");
+                        if (loginEmail === 'admin@gmail.com') {
+                            window.location.href = '/admin.html'; // Redirect to admin page
+                        } else {
+                            window.location.href = '/demo_home.html'; // Redirect to news page
+                        }
                     } else {
                         console.log(data.message);
                         alert('Login failed: ' + data.message); // Show error message

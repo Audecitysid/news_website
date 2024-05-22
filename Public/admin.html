@@ -226,16 +226,12 @@
         <a id="web_analytics" class="nav-link px-3">Website Analytics </a>
         <a id="server_logs" class="nav-link px-3">Server Logs</a>
         <a id="user_list" class="nav-link px-3">Users</a>
-        <a id="gb" class="nav-link px-3">Article stats</a>
-        <a id="sports" class="nav-link px-3">Sports</a>
-        <a id="culture" class="nav-link px-3">Culture</a>
+        <a id="Article stats" class="nav-link px-3">Article stats</a>
     </div>
 
     <div id="sidebar">
         <h4 class="text-white mb-4">Menu</h4>
-        <a href="#" class="nav-link text-white d-block mb-2">Profile</a>
-        <a href="#" class="nav-link text-white d-block mb-2">History</a>
-        <a href="#" class="nav-link text-white d-block mb-2">Preferences</a>
+
         <a href="#" id="logout" class="nav-link text-white d-block">Logout</a>
     </div>
 
@@ -244,9 +240,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('web_analytics').addEventListener('click', () => fetchContent('WebAnalytics'));
-            document.getElementById('server_logs').addEventListener('click', () => fetchContent('ServerLogs'));
+            document.getElementById('server_logs').addEventListener('click', () => userActivity('all'));
             document.getElementById('user_list').addEventListener('click', () => fetchContent('UserList'));
-            document.getElementById('gb').addEventListener('click', () => fetchContent('GraphStats'));
+            document.getElementById('Article stats').addEventListener('click', () => fetchContent('GraphStats'));
             document.getElementById('logout').addEventListener('click', () => logout());
         });
 
