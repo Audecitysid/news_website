@@ -20,7 +20,10 @@ exports.handler = async function(event, context) {
                 const user = await collection.findOne({ email: data.email });
                 if (user && user.password === data.password) { // Simplified: ALWAYS hash passwords in production
                   // here we use email temporarily but will switch to hashed email or maybe 
-
+                  let isAdmin = "false";
+                  if(data.email === "admin@gmail.com"){
+                    isAdmin = "true";
+                  }
                   //will add logic to store auth token of each and every user
 
                   const serializedCookie = cookie.serialize('authToken', data.email , {
@@ -37,7 +40,7 @@ exports.handler = async function(event, context) {
 
 
                     },
-                    body: JSON.stringify({ message: 'Login successful' })
+                    body: JSON.stringify({ message: 'Login successful', Admin : isAdmin })
                   };
                 }
                 return { statusCode: 403, body: JSON.stringify({ message: 'user id or password is wrong' }) };
@@ -50,7 +53,11 @@ exports.handler = async function(event, context) {
                     email: data.email,
                     password: data.password // Hash this in production!
                 });
-                return { statusCode: 200, body: JSON.stringify({ message: 'Signup successful', data: insertResult.ops }) };
+                return { statusCode: 200, 
+                  body: JSON.stringify({ 
+                  message: 'Signup successful', 
+                  data: insertResult.ops 
+                  }) };
               
 
             case 'logout':

@@ -121,7 +121,7 @@
                 </div>
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="we won't spam you :)" required
+                    <input type="email" id="email" name="email" placeholder="we won't spam you " required
                         class="mt-1 block w-full">
                 </div>
                 <div class="mb-6">
@@ -143,36 +143,12 @@
                 event.preventDefault(); // Prevent the form from submitting normally
                 const loginEmail = document.getElementById('login-email').value;
                 const loginPassword = document.getElementById('login-password').value;
+
+
     
                 // Send login data to the serverless function
-                fetch('/.netlify/functions/rough', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'login',
-                        email: loginEmail,
-                        password: loginPassword
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Login response:', data);
-                    if (data.message === 'Login successful') {
-                        console.log(loginEmail + "login email");
-                        if (loginEmail === 'admin@gmail.com') {
-                            window.location.href = '/admin.html'; // Redirect to admin page
-                        } else {
-                            window.location.href = '/demo_home.html'; // Redirect to news page
-                        }
-                    } else {
-                        console.log(data.message);
-                        alert('Login failed: ' + data.message); // Show error message
-                    }
-                })
-                .catch(error => {
-                    console.error('Error logging in:', error);
-                    alert('Login error: ' + error.message);
-                });
+                authentication_request('login' , loginEmail , loginPassword , "null")
+                
     
             });
     
@@ -184,32 +160,64 @@
                 const password = document.getElementById('password').value;
     
                 // Send signup data to the serverless function
-                fetch('/.netlify/functions/rough', {
+
+                authentication_request('signup' , email , password , fullName)
+                
+            });
+        });
+
+
+        function authentication_request(request_type , uid , password , fullname){
+
+
+            // Send data to the serverless function
+            fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'signup',
-                        fullName: fullName,
-                        email: email,
-                        password: password
+                        type: request_type,
+                        email: uid,
+                        password: password,
+                        fullName: fullname
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Signup response:', data);
-                    if (data.message === 'Signup successful') {
-                        alert('Signup successful! Now please login');
+
+                    if(request_type === 'signup'){
+                        if (data.message === 'Signup successful') {
+                            alert('Signup successful! Now please login');
+                            
+                        } else {
+                            alert('Signup failed: ' + data.message); // Show error message
+                        }
+                    } else if(request_type === 'login'){
+                                if (data.message === 'Login successful') {
+                                    if (data.Admin === 'true') {
+                                        window.location.href = '/admin.html'; // Redirect to admin page
+                                    } else {
+                                        window.location.href = '/demo_home.html'; // Redirect to news page
+                                    }
+                                } else {
+                                    console.log(data.message);
+                                    alert('Login failed: ' + data.message); // Show error message
+                                }
+
                         
-                    } else {
-                        alert('Signup failed: ' + data.message); // Show error message
                     }
+
+
+
+
                 })
                 .catch(error => {
-                    console.error('Error signing up:', error);
-                    alert('Signup error: ' + error.message);
+                    console.error('Error :', error);
+                    alert(' Error: ' + error.message);
                 });
-            });
-        });
+
+
+
+        }
     </script>
     
     
