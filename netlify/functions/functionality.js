@@ -9,22 +9,38 @@ exports.handler = async function(event, context) {
         const data = JSON.parse(event.body);
         const api_key = "5ff6da31ba214f1285962596a3670a8b";
 
-        
-        
-        
+        //blockingDelay(); // Blocks the execution for 20 seconds
 
         const cookies = cookie.parse(event.headers.cookie || '');
         const authToken = cookies.authToken;
-        console.log("cookie data : " + authToken );
+        
 
-        /* log the user data to database */
+        const { db } = await connectToDatabase(); // Use the connectToDatabase function from utils/db.js
+        const MasterUser = await db.collection('users').findOne({ cookie: authToken });
+
+        if(!MasterUser){
+            return {
+                statusCode: 404, // Not Found
+                body: JSON.stringify({ msg: "Auth token is invalid" })
+            };
+        }
+
+
+        // writing logs to server_logs
+        const log_object = {
+            ...data, // Copy all fields from data
+            email: MasterUser.email, // Add the email field
+            timestamp: new Date() // Add a timestamp if needed
+        };
+
+        await db.collection('server_logs').insertOne(log_object);
+
 
         switch (data.type) {
             case 'search':
                 try {
                     
                     const q_term = data.q_term;
-                    console.log("API request made for term:", q_term);
                     const API_URL = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q_term)}&apikey=${api_key}`;
 
                     const response = await axios.get(API_URL);
@@ -43,21 +59,30 @@ exports.handler = async function(event, context) {
             case 'country':
 
                     try{    
-                    const updateDbUrl = `${process.env.URL}/.netlify/functions/update_db`;
-                    await axios.post(updateDbUrl);
+                    
 
         
                     const country = data.country;
 
                     // Constructing the URL with template literals
                     const API_URL = `https://newsapi.org/v2/top-headlines?country=${encodeURIComponent(country)}&apiKey=${encodeURIComponent(api_key)}`;
-                    console.log("API request made for country : " + country);
+                    
 
                     const response = await axios.get(API_URL)
 
+
+                    
+
+                    const responseData = {
+                        ...response.data,
+                        
+                        userDetails: MasterUser.fullName , 
+                        userEmail :  MasterUser.email 
+                    };
+
                     return {
                         statusCode: 200,
-                        body: JSON.stringify(response.data)
+                        body: JSON.stringify(responseData)
                       };
 
 
@@ -75,15 +100,17 @@ exports.handler = async function(event, context) {
                 
                 try {
                     // update the article collection
+                    /*
                     const updateDbUrl = `${process.env.URL}/.netlify/functions/update_db`;
                     await axios.post(updateDbUrl);
+                    */
 
                     const category = data.category;
                     const country = 'in';
 
                     
                     const API_URL = `https://newsapi.org/v2/top-headlines?country=${encodeURIComponent(country)}&category=${encodeURIComponent(category)}&apiKey=${encodeURIComponent(api_key)}`;
-                    console.log("API request made : " + country + ' ' + category );
+                    
 
                     const response = await axios.get(API_URL)
 
@@ -105,28 +132,25 @@ exports.handler = async function(event, context) {
 
             case 'auth':
                 
-                try {            
-                        const cookies = cookie.parse(event.headers.cookie || '');
-                        const authToken = cookies.authToken;
-                        console.log("cookie data : " + authToken );
+                try {     
+                        
+                        let adminflag = 'False';  
+                        if(MasterUser.admin === 'True' ){
+                            adminflag = 'True';
 
-                        const { db } = await connectToDatabase(); // Use the connectToDatabase function from utils/db.js
-                        const user = await db.collection('users').findOne({ email: authToken });
-
-
-                        if (user) {
-                            console.log("auth is valid : " + user.fullName + ' ' + user.email);
+                        }
+                        
                             return {
                                 statusCode: 200,
-                                body: JSON.stringify({ msg: "Auth token is valid", userDetails: user.fullName , userEmail :  user.email })
+                                body: JSON.stringify({ 
+                                    msg: "Auth token is valid", 
+                                    userDetails: MasterUser.fullName , 
+                                    userEmail :  MasterUser.email ,
+                                    admin_auth: adminflag
+                                })
                                 
                             };
-                        } else {
-                            return {
-                                statusCode: 404, // Not Found
-                                body: JSON.stringify({ msg: "Auth token is invalid" })
-                            };
-                        }
+                         
 
 
 
@@ -139,57 +163,105 @@ exports.handler = async function(event, context) {
                     };
                 }
 
-            case 'log' :
-                try{
 
-                    console.log('entered log');
+            
 
-                    // Validate auth token
-                    const { db } = await connectToDatabase();
-                    const user = await db.collection('users').findOne({ email: authToken });
+            case 'logout' : 
 
-                    if (!user) {
-                        return {
-                            statusCode: 401, // Unauthorized
-                            body: JSON.stringify({ msg: "Auth token is invalid" })
-                        };
+                    try {            
+                        
+                        
+                        await db.collection('users').updateOne({ cookie: authToken }, { $set: { cookie: "Logged Out" } });
+
+                        const serializedCookie = cookie.serialize('authToken', '', {
+                            httpOnly: false,
+                            path: '/',
+                            maxAge: -1 // Delete cookie
+                          });
+
+                          return {
+                            statusCode: 200,
+                            headers: {
+                              'Set-Cookie': serializedCookie ,
+                              'Content-Type': 'application/json'
+        
+        
+                            },
+                            body: JSON.stringify({ 
+                              message: 'Logout successful' 
+                            })
+                          };
+                                
                     }
-
-                    const action_type = data.action_type;
-                    const acticle_title = data.article_title;
-                    const uid = authToken;
-                    const publishedAt = data.article_time;
-                    
-
-                    const logEntry = {
-
-                        email : uid,
-                        action_type,
-                        acticle_title,
-                        publishedAt,
-                        timestamp: new Date()
-
-                    }
-                    await db.collection('user_logs').insertOne(logEntry);
-
+                                      
+                catch (error) {
+                    console.error("API request error: ", error);
                     return {
-                        statusCode: 200,
-                        body: JSON.stringify({ msg: "Action logged successfully" })
+                        statusCode: error.response?.status || 500,
+                        body: JSON.stringify({ msg: "Error logging out ", details: error.message })
                     };
+                }
 
+                
+                
 
-                }catch (error) {
+            case 'article_reactions' :
+
+                try{
+                    
+                     
+                    const ArticleReaction = {
+                            
+                        publishedAt : data.publishedAt,
+                        uid : MasterUser.email,
+                        action_type : data.action_type,
+                        url : data.url,
+                        urlToImage : data.urlToImage,
+                        Title : data.title,
+                        Description : data.description
+
+                    }
+
+                    await db.collection('Article_Reactions').insertOne(ArticleReaction);
+
+                        return {
+                            statusCode: 200,
+                            body: JSON.stringify({ msg: "article reaction saved" })
+                        };
+                }catch(error) {
                     console.error("Error logging action: ", error);
                     return {
                         statusCode: error.response?.status || 500,
-                        body: JSON.stringify({ msg: "Error logging action", details: error.message })
+                        body: JSON.stringify({ msg: "Error saving reaction ", details: error.message })
                     };
                 }
+
+                
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // admin actions
 
             case 'UserList':
                 // add code to retrieve the data from table users and return all the data retrieved to the frontennd
                 try {
-                    const { db } = await connectToDatabase();
+                    
                     const users = await db.collection('users').find({}).toArray();
                     return {
                         statusCode: 200,
@@ -207,7 +279,7 @@ exports.handler = async function(event, context) {
                 case 'deleteUser':
                 // New delete user functionality
                 try {
-                    const { db } = await connectToDatabase();
+                    
                     const userId = data.userId;
                     await db.collection('users').deleteOne({ email: userId });
                     //await db.collection('user_logs').deleteMany({ email: userId });
@@ -227,7 +299,7 @@ exports.handler = async function(event, context) {
             case 'viewActivity':
                 // New view activity functionality
                 try {
-                    const { db } = await connectToDatabase();
+                    
                     const userId = data.userId;
                     
                     let logs
@@ -260,11 +332,30 @@ exports.handler = async function(event, context) {
                     body: JSON.stringify({ msg: "Invalid request type" })
                 };
         }
+
+
+        
+
+            
+
+        
+
+        function blockingDelay() {
+            
+        }
+
+
+
+
+
     } catch (error) {
         console.error("Error handling request:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ msg: "Server error", details: error.message })
         };
+
     }
+
+    // log function can come here
 };

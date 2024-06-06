@@ -116,7 +116,7 @@
             <form action="/submit-your-form-handler" method="POST">
                 <div class="mb-4">
                     <label for="fullname" class="block text-sm font-medium">Name:</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Rahul Dahivade" required
+                    <input type="text" id="fullname" name="fullname" placeholder="Full Name" required
                         class="mt-1 block w-full">
                 </div>
                 <div class="mb-4">
@@ -199,7 +199,7 @@
                                         window.location.href = '/demo_home.html'; // Redirect to news page
                                     }
                                 } else {
-                                    console.log(data.message);
+                                    
                                     alert('Login failed: ' + data.message); // Show error message
                                 }
 
@@ -211,7 +211,7 @@
 
                 })
                 .catch(error => {
-                    console.error('Error :', error);
+                    
                     alert(' Error: ' + error.message);
                 });
 

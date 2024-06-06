@@ -388,17 +388,24 @@
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'auth' })
+                    body: JSON.stringify({ 
+                        type: 'auth'
+                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.userDetails) {
+
+                    if(data.admin_auth === 'true'){
+                        
                         console.log("Verified: " + data.userDetails);
                         document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';
                         fetchContent('UserList');
+                        
                     } else {
-                        window.location.href = '/index.html';
+                            logout();
+                            window.location.href = '/index.html';
                     }
+
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }

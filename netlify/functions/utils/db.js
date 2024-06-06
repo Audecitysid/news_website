@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 // MongoDB connection URI
-const uri = "mongodb+srv://sid:8156@sidcluster.fwysycx.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://dev_user:6541@sidcluster.fwysycx.mongodb.net/?retryWrites=true&w=majority";
 
 let cachedClient = null;
 let cachedDb = null;

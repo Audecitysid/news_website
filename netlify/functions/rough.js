@@ -1,17 +1,32 @@
 
 const cookie = require('cookie');
 const { connectToDatabase } = require('./utils/db'); 
+const crypto = require('crypto');
+
 
 
 exports.handler = async function(event, context) {
     if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
-    console.log("got in handler");
 
     const data = JSON.parse(event.body);
+    console.log('entered event handler');
+    
+    const { db } = await connectToDatabase();
+    const collection = db.collection('users');
+    
+
+    
+          const log_object = {
+            ...data, // Copy all fields from data
+            timestamp: new Date() // Add a timestamp if needed
+        };
+
+        await db.collection('server_logs').insertOne(log_object);
+        
+    
 
     try {
-        const { db } = await connectToDatabase();
-        const collection = db.collection('users');
+        
 
         switch (data.type) {
             case 'login':
@@ -19,14 +34,18 @@ exports.handler = async function(event, context) {
                 // This would typically involve finding the user and comparing hashed passwords
                 const user = await collection.findOne({ email: data.email });
                 if (user && user.password === data.password) { // Simplified: ALWAYS hash passwords in production
-                  // here we use email temporarily but will switch to hashed email or maybe 
+                   
                   let isAdmin = "false";
-                  if(data.email === "admin@gmail.com"){
+                  if(user.admin === "True"){
                     isAdmin = "true";
                   }
-                  //will add logic to store auth token of each and every user
+                  //logic to store auth token of each and every user
 
-                  const serializedCookie = cookie.serialize('authToken', data.email , {
+                  const hash = crypto.createHash('sha256').update(data.email).digest('hex');
+                  await collection.updateOne({ email: data.email }, { $set: { cookie: hash } });
+
+
+                  const serializedCookie = cookie.serialize('authToken', hash , {
                     httpOnly: false,
                     path: '/',
                     maxAge: 60 * 60 * 24 // 24 hours
@@ -48,7 +67,9 @@ exports.handler = async function(event, context) {
 
             case 'signup':
                 // Insert new user data
-                const insertResult = await collection.insertOne({
+                console.log('connecting to database');             
+
+                    const insertResult = await collection.insertOne({
                     fullName: data.fullName,
                     email: data.email,
                     password: data.password // Hash this in production!
@@ -61,6 +82,12 @@ exports.handler = async function(event, context) {
               
 
             case 'logout':
+
+                  const cookies = cookie.parse(event.headers.cookie || '');
+                  const authToken = cookies.authToken;    
+                  
+                  await db.collection('users').updateOne({ cookie: authToken }, { $set: { cookie: "Logged Out" } });
+
 
                   const serializedCookie = cookie.serialize('authToken', '', {
                     httpOnly: false,
@@ -76,12 +103,18 @@ exports.handler = async function(event, context) {
 
 
                     },
-                    body: JSON.stringify({ message: 'Logout successful' })
+                    body: JSON.stringify({ 
+                      message: 'Logout successful' 
+                    })
                   };
 
                 
             default:
-                return { statusCode: 400, body: JSON.stringify({ message: 'Bad Request' }) };
+                return { 
+                  statusCode: 400, 
+                  body: JSON.stringify({ 
+                    message: 'Bad Request' 
+                  }) };
         }
     } catch (error) {
         return { statusCode: 500, body: JSON.stringify({ message: 'Error accessing the database', error: error.message }) };

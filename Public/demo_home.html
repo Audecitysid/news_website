@@ -250,39 +250,23 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Setup event listeners for each navbar item
-            document.getElementById('in').addEventListener('click', () => fetchNews('in'));
-            document.getElementById('us').addEventListener('click', () => fetchNews('us'));
-            document.getElementById('ca').addEventListener('click', () => fetchNews('ca'));
-            document.getElementById('gb').addEventListener('click', () => fetchNews('gb'));
-            document.getElementById('sports').addEventListener('click', () => fetchNews_catagory('in' ,'sports'));
-            document.getElementById('culture').addEventListener('click', () => fetchNews_catagory('in', 'entertainment'));
+            document.getElementById('in').addEventListener('click', () => fetch_content('country','in','null' , 'null'));
+            document.getElementById('us').addEventListener('click', () => fetch_content('country','us','null' , 'null'));
+            document.getElementById('ca').addEventListener('click', () => fetch_content('country','ca','null' , 'null'));
+            document.getElementById('gb').addEventListener('click', () => fetch_content('country','gb','null' , 'null'));
+            document.getElementById('sports').addEventListener('click', () => fetch_content('category' , 'in' ,'sports', 'null'));
+            document.getElementById('culture').addEventListener('click', () => fetch_content('category' , 'in', 'entertainment' , 'null'));
             document.getElementById('logout').addEventListener('click', () => logout());
-            document.getElementById('history').addEventListener('click', () => view_history());
+            document.getElementById('history').addEventListener('click', () => userActivity());
+            document.getElementById('site-name').addEventListener('click', function() { window.location.reload(); });
         });
 
         // Search bar functionality
         document.getElementById('search-button').addEventListener('click', function() {
             var searchTerm = document.getElementById('search-input').value;
-            console.log('Searching for:', searchTerm);
-            searchArticle_log(searchTerm , 'null');
+            
+            fetch_content('search' , 'null' , 'null' , searchTerm);
 
-            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
-            fetch('/.netlify/functions/functionality', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'search',
-                        q_term: searchTerm,
-                        uid: 'sample_uid'
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    displayNews(data.articles);
-                    console.log("Total results: " + data.totalResults);
-                })
-                .catch(error => console.error('Error fetching data:', error));
         });
 
         // Side bar (hamburger menu) functionality
@@ -291,120 +275,97 @@
             sidebar.style.left = sidebar.style.left === '0px' ? '-200px' : '0px';
         });
 
-        document.getElementById('site-name').addEventListener('click', function() { window.location.reload(); });
+        async function fetch_content( request_type , u_country , u_category , search_term ){
 
-        // Main function to fetch the news on page loading 
-        function fetchNews(region) {
+
             document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
-            fetchNews_log( region , 'null');
+            
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'country',
-                        country: region,
+                        type: request_type,
+                        country: u_country,
+                        category: u_category,
+                        q_term: search_term
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
+
+
+                    // if else condition
+                    if(u_country === 'us'){document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';}
+                    
                     displayNews(data.articles);
                 })
                 .catch(error => console.error('Error fetching data:', error));
-        }
 
-        // Fetch news by category
-        function fetchNews_catagory(region, c_type) {
-            document.getElementById('news-container').innerHTML = '<div style="text-align:center">Loading</div>'; // Clearing the page
-            fetchNews_log( c_type , 'null');
 
-            fetch('/.netlify/functions/functionality', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'category',
-                        country: region,
-                        category: c_type,
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    displayNews(data.articles);
-                })
-                .catch(error => console.error('Error fetching data:', error));
+
+
         }
 
         // General purpose function to populate the waterfall containers with whatever data is fetched
         function displayNews(articles) {
-    document.getElementById('news-container').innerHTML = ''; // Clearing the page
-    const container = document.getElementById('news-container');
-    articles.forEach(article => {
-        if (article.title !== "[Removed]") {
-            const articleContainer = document.createElement('div');
-            articleContainer.className = 'article-container';
+            document.getElementById('news-container').innerHTML = ''; // Clearing the page
+            const container = document.getElementById('news-container');
+            articles.forEach(article => {
+                if (article.title !== "[Removed]") {
+                    const articleContainer = document.createElement('div');
+                    articleContainer.className = 'article-container';
 
-            const elem = document.createElement('div');
-            elem.className = 'article';
+                    const elem = document.createElement('div');
+                    elem.className = 'article';
 
-            // Escape the title to avoid syntax errors
-            const escapedTitle = article.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    // Escape the title to avoid syntax errors
+                    const escapedTitle = article.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    const escapedUrl = article.url.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    const escapedUrlToImage = (article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg').replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    const escapedDescription = (article.description || 'No description available.').replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    const escapedPublishedAt = article.publishedAt.replace(/'/g, "\\'").replace(/"/g, '\\"');
 
-            elem.innerHTML = `
-                <img src="${article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg'}" class="article-image">
-                <h2 class="article-title">${article.title}</h2>
-                <p class="article-description">${article.description || 'No description available.'}</p>
-                <p class="article-time">${article.publishedAt}</p>
-                
-                <button class="like-button" onclick="readArticle('${escapedTitle}', '${article.publishedAt}')"> <a href="${article.url}" target="_blank" class="article-link">Read more</a></button>
-                <div>
-                    <button class="like-button" onclick="likeArticle('${escapedTitle}', '${article.publishedAt}')">👍 Like</button>
-                    <button class="dislike-button" onclick="dislikeArticle('${escapedTitle}' , '${article.publishedAt}')">👎 Dislike</button>
-                    <button class="save-button" onclick="saveArticle('${escapedTitle}', '${article.publishedAt}')">💾 Save</button>
-                </div>
-            `;
-            articleContainer.appendChild(elem);
-            container.appendChild(articleContainer);
-        }
+
+
+                    elem.innerHTML = `
+                        <img src="${article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg'}" class="article-image">
+                        <h2 class="article-title">${article.title}</h2>
+                        <p class="article-description">${article.description || 'No description available.'}</p>
+                        <p class="article-time">${article.publishedAt}</p>
+                        
+
+                        <button class="like-button" onclick="SaveReaction( 'Read_Article','${escapedPublishedAt}' , '${escapedUrl}' , '${escapedUrlToImage}' , '${escapedTitle}', '${escapedDescription}')"> <a href="${article.url}" target="_blank" class="article-link">Read more</a></button>
+          
+                        <div>                                                   
+                            <button class="like-button" onclick="SaveReaction( 'Like_Article', '${escapedPublishedAt}' , '${escapedUrl}' , '${escapedUrlToImage}' , '${escapedTitle}', '${escapedDescription}')">👍 Like</button>
+                            <button class="dislike-button" onclick="SaveReaction('Dislike_Article' , '${escapedPublishedAt}' , '${escapedUrl}' , '${escapedUrlToImage}' , '${escapedTitle}', '${escapedDescription}')">👎 Dislike</button>
+                            <button class="save-button" onclick="SaveReaction( 'Save_Article', '${escapedPublishedAt}' , '${escapedUrl}' , '${escapedUrlToImage}' , '${escapedTitle}', '${escapedDescription}')">💾 Save</button>
+                        </div>
+                    `;
+                    articleContainer.appendChild(elem);
+                    container.appendChild(articleContainer);
+                }
     });
 }
 
 
 
-        function view_history(){                    
-            fetch('/.netlify/functions/functionality', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'auth',
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.userDetails) {
-                        console.log("fetching history for : " + data.userEmail);
-                        userActivity(data.userEmail);
-                        
-                        
-                    } 
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-        function userActivity(userId) {
-                    console.log('Fetching activity for user:', userId);
+        
+        function userActivity() { // display user activity
+                    
                     fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         type: 'viewActivity', 
-                        userId: userId 
+                        
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('User activity:', data);
+                    
                     displayActivityLogs(data);
                     
                 })
@@ -453,108 +414,37 @@
 
 
 
-        // action log and auth functionality ########################################################################################
         
-        function fetchNews_log(title , publish_time) {
-            
-            
-            log_actions('Fetched News ' , title , publish_time );
-
-        }
-
-        function logout_log(title , publish_time){
-
-            log_actions('User Logged out ' , title , publish_time );
-
-        }
-        
-
-        function auth_log(title , publish_time){
-
-            log_actions('User Logged in ' , title , publish_time );
-
-        }
-        
-        function likeArticle(title , publish_time) {
-            
-            console.log(publish_time);
-            log_actions('Like Article ' , title , publish_time );
-
-        }
-
-        function dislikeArticle(title , publish_time) {
-            
-            log_actions('Dislike Article ' , title , publish_time );
-            
-        }
-
-        function saveArticle(title , publish_time) {
-
-            log_actions('Save Article ' , title , publish_time);
-            alert('article saved :)');
-        }
-
-        function readArticle(title , publish_time) {
-
-            log_actions('Read Article ' , title , publish_time)
-            
-        }
-
-        function searchArticle_log(title , publish_time){
-            log_actions('Search Article' , title , publish_time)
-        }
-
 
         // will use this for registering likes, dislikes, read more , saved articles
-        function log_actions(action_t, article_t , p_time) {
+        function SaveReaction(action_t, publishedAt , article_url , urlToImage , article_t , description) {
             fetch('/.netlify/functions/functionality', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'log',
+                        type: 'article_reactions',
+                        publishedAt: publishedAt,
                         action_type: action_t,
-                        article_title: article_t ,
-                        article_time: p_time
+                        url: article_url,
+                        urlToImage: urlToImage,
+                        title: article_t ,
+                        description: description
 
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('action logged successfully');
+                    
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
 
 
-        function authenticate() { 
-                               
-            fetch('/.netlify/functions/functionality', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'auth',
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.userDetails) {
-                        console.log("Verified: " + data.userDetails);
-                        // Display the name in signup button
-                        document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';
-                        auth_log(data.userDetails , 'null')
-                        fetchNews('us');
-                    } else {
-                        window.location.href = '/index.html';
-                    }
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
 
         function logout() {
 
-            logout_log( 'null' , 'null');
+            
             fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     credentials: 'include',
@@ -565,7 +455,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Response:', data.message);
+                    
                     alert(data.message);
                     window.location.reload();
                 })
@@ -581,9 +471,10 @@
                 // No cookies available, redirect to login page
                 window.location.href = '/index.html';
             } else {
-                // Cookies exist, continue with page logic
-                console.log("Cookies are available:", document.cookie);
-                authenticate();
+
+                //Promise.all([authenticate(), fetch_content('country', 'us', 'null', 'null')]);
+                fetch_content('country', 'us', 'null', 'null')
+                
             }
         });
     </script>
