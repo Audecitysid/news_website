@@ -300,15 +300,22 @@ exports.handler = async function(event, context) {
                 // New view activity functionality
                 try {
                     
-                    const userId = data.userId;
+                    const userId = MasterUser.email;
                     
                     let logs
 
                     if(userId === 'all'){
                         logs = await db.collection('user_logs').find().toArray();
                     }
+
+                    
+
                     else{
-                        logs = await db.collection('user_logs').find({ email: userId }).toArray();
+                        logs = await db.collection('Article_Reactions').find({ uid: userId }).toArray();
+                        console.log("log.uid : " ,  MasterUser.email);
+                        console.table(logs);
+                        
+                    
                     }
 
                     return {

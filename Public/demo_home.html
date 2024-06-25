@@ -238,7 +238,7 @@
         <div id="account-info"><button id="signup-button"><div id="user_name" style="display: inline;"></div></button></div>
     </div>
 
-    <!-- AdSense Ad Below Title Bar -->
+    <!-- AdSense Ad Below Title Bar 
     <div style="text-align:center; margin: 20px 0;">
         <ins class="adsbygoogle"
             style="display:block; text-align:center;"
@@ -249,7 +249,9 @@
         <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
-        
+    -->
+    
+    
     </div>
     <div id="navbar" class="d-flex justify-content-center align-items-center">
         <a id="in" class="nav-link px-3">India</a>
@@ -389,6 +391,8 @@
                 .then(data => {
                     
                     displayActivityLogs(data);
+                    console.log("Data from activity : " , data);
+                    console.table(data);
                     
                 })
                 .catch(error => console.error('Error fetching user activity:', error));
@@ -403,17 +407,17 @@
                                 <th>Action Type</th>
                                 <th>Article Title</th>
                                 <th>Published At</th>
-                                <th>Timestamp</th>
+                                <th>URL</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${logs.map(log => `
                                 <tr>
-                                    <td>${log.email}</td>
+                                    <td>${log.uid}</td>
                                     <td>${log.action_type}</td>
-                                    <td>${log.acticle_title}</td>
+                                    <td>${log.Title}</td>
                                     <td>${log.publishedAt}</td>
-                                    <td>${log.timestamp}</td>
+                                    <td>${log.url}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -487,11 +491,67 @@
                 });
         }
 
+
+
+        function authentication_request(){
+
+
+            // Send data to the serverless function
+            fetch('/.netlify/functions/rough', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'login',
+                        email: 'demo@gmail.com',
+                        password: 'password',
+                        fullName: 'demo user'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+
+                    fetch_content('country', 'us', 'null', 'null');
+                    let request_type = "login";
+
+                    if(request_type === 'signup'){
+                        if (data.message === 'Signup successful') {
+                            alert('Signup successful! Now please login');
+                            
+                        } else {
+                            alert('Signup failed: ' + data.message); // Show error message
+                        }
+                    } else if(request_type === 'login'){
+                                if (data.message === 'Login successful') {
+                                    if (data.Admin === 'true') {
+                                        window.location.href = '/admin.html'; // Redirect to admin page
+                                    } else {
+                                        
+                                    }
+                                } else {
+                                    
+                                    alert('Login failed: ' + data.message); // Show error message
+                                }
+
+                        
+                    }
+
+
+
+
+                })
+                .catch(error => {
+                    
+                    alert(' Error: ' + error.message);
+                });
+            }
+
         // Checks if the cookies are present otherwise reloads right away
         document.addEventListener('DOMContentLoaded', function() {
             if (document.cookie === "") {
                 // No cookies available, redirect to login page
-                window.location.href = '/index.html';
+                //window.location.href = '/index.html';
+
+                authentication_request();
             } else {
 
                 //Promise.all([authenticate(), fetch_content('country', 'us', 'null', 'null')]);
