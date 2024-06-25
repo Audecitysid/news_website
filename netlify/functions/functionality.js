@@ -312,8 +312,8 @@ exports.handler = async function(event, context) {
 
                     else{
                         logs = await db.collection('Article_Reactions').find({ uid: userId }).toArray();
-                        console.log("log.uid : " ,  MasterUser.email);
-                        console.table(logs);
+                        //console.log("log.uid : " ,  MasterUser.email);
+                        //console.table(logs);
                         
                     
                     }
