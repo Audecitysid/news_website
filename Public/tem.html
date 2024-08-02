@@ -3,55 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoke Serverless Function</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+    <title>Cookie Demo</title>
+    <script>
+        // Function to set a cookie
+        function setCookie(name, value, days) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+            alert('Cookie set: ' + name + '=' + value);
         }
-        #invoke-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
+
+        // Function to get a cookie
+        function getCookie(name) {
+            const cname = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(cname) == 0) {
+                    return c.substring(cname.length, c.length);
+                }
+            }
+            return "";
         }
-        #message {
-            margin-top: 20px;
+
+        // Function to delete a cookie
+        function deleteCookie(name) {
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+            alert('Cookie deleted: ' + name);
         }
-    </style>
+
+        // write script to find a specific cookie
+
+        // Function to display current cookies
+        function showCookies() {
+            alert('Current cookies: ' + document.cookie);
+        }
+    </script>
 </head>
 <body>
-    <div>
-        <button id="invoke-button">Invoke Serverless Function</button>
-        <div id="message"></div>
-    </div>
-
-    <script>
-        document.getElementById('invoke-button').addEventListener('click', async () => {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = 'Invoking serverless function...';
-
-            try {
-                const response = await fetch('/.netlify/functions/tem');
-                const result = await response.json();
-
-                if (response.ok) {
-                    messageDiv.textContent = 'Success: ' + result.msg;
-                } else {
-                    messageDiv.textContent = 'Error: ' + result.msg;
-                }
-            } catch (error) {
-                messageDiv.textContent = 'Error: ' + error.message;
-            }
-        });
-    </script>
+    <h1>Cookie Demo</h1>
+    <button onclick="setCookie('testCookie', 'hello', 7)">Set Cookie</button>
+    <button onclick="alert('Cookie value: ' + getCookie('testCookie'))">Get Cookie</button>
+    <button onclick="deleteCookie('testCookie')">Delete Cookie</button>
+    <button onclick="showCookies()">Show All Cookies</button>
 </body>
 </html>

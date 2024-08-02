@@ -17,13 +17,14 @@ exports.handler = async function(event, context) {
 
         const { db } = await connectToDatabase(); // Use the connectToDatabase function from utils/db.js
         const MasterUser = await db.collection('users').findOne({ cookie: authToken });
+        console.log('cookie' + authToken);
 
         if(!MasterUser){
             return {
                 statusCode: 404, // Not Found
-                body: JSON.stringify({ msg: "Auth token is invalid" })
+                body: JSON.stringify({ msg: "Auth Invalid" })
             };
-        }
+        } 
 
 
         // writing logs to server_logs
@@ -37,6 +38,9 @@ exports.handler = async function(event, context) {
 
 
         switch (data.type) {
+
+            
+
             case 'search':
                 try {
                     
@@ -143,7 +147,7 @@ exports.handler = async function(event, context) {
                             return {
                                 statusCode: 200,
                                 body: JSON.stringify({ 
-                                    msg: "Auth token is valid", 
+                                    msg: "Auth Valid", 
                                     userDetails: MasterUser.fullName , 
                                     userEmail :  MasterUser.email ,
                                     admin_auth: adminflag

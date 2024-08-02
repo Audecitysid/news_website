@@ -219,11 +219,7 @@
 
     </style>
 </style>
-<!-- AdSense Script -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+
 
 
 </head>
@@ -238,18 +234,7 @@
         <div id="account-info"><button id="signup-button"><div id="user_name" style="display: inline;"></div></button></div>
     </div>
 
-    <!-- AdSense Ad Below Title Bar 
-    <div style="text-align:center; margin: 20px 0;">
-        <ins class="adsbygoogle"
-            style="display:block; text-align:center;"
-            data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
-            data-ad-slot="xxxxxxxxxx"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    -->
+    
     
     
     </div>
@@ -270,6 +255,8 @@
         <a id="logout" class="nav-link text-white d-block mb-2">Log Out</a>
     </div>
     <div id="news-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"> // library for browser fingerprint</script> 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -318,11 +305,42 @@
                 .then(response => response.json())
                 .then(data => {
 
+                    if(data.msg === 'Auth Invalid'){
 
-                    // if else condition
-                    if(u_country === 'us'){document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';}
+                        document.getElementById('news-container').innerHTML = '<div style="text-align:center"> Problem Authenticating... clearing cookies and reloading page </div>'; // Clearing the page
+                        // clear cookies
+
+                        setTimeout(() => {
+                                console.log('');
+                            }, 2000);
+
+
+                        const cookies = document.cookie.split(';');
+                        
+                        
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i];
+                            const eqPos = cookie.indexOf('=');
+                            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+                        }                        
+                 
+                        // reload page
+                        window.location.reload();
+
+
+                    }else{
+
+
+                        if(u_country === 'us'){document.getElementById('user_name').innerHTML = ' 👤 ' + data.userDetails + '';}
                     
-                    displayNews(data.articles);
+                        displayNews(data.articles);
+
+                    }
+
+
+                    
+                    
                 })
                 .catch(error => console.error('Error fetching data:', error));
 
@@ -490,50 +508,67 @@
                     alert('Error: ' + error.message);
                 });
         }
+    
+
+        async function getClientIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP address:', error);
+                return null;
+            }
+        }
 
 
 
-        function authentication_request(){
+        async function getBrowserFingerprint() {
+            return FingerprintJS.load()
+                .then(fp => fp.get())
+                .then(result => result.visitorId);
+                
+        }
 
+
+
+
+        async function authentication_request(){
+            
+
+            const ip = 'ip';
+            const finger_print = await getBrowserFingerprint();
+            console.log(ip , finger_print);
 
             // Send data to the serverless function
             fetch('/.netlify/functions/rough', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'login',
+                        type: 'signup',
                         email: 'demo@gmail.com',
                         password: 'password',
-                        fullName: 'demo user'
+                        fullName: 'demo user',
+                        ip_address: ip, 
+                        fingerprint: finger_print
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
 
-                    fetch_content('country', 'us', 'null', 'null');
-                    let request_type = "login";
-
-                    if(request_type === 'signup'){
+                    
+                        alert(data.message);
                         if (data.message === 'Signup successful') {
-                            alert('Signup successful! Now please login');
+
+                            fetch_content('country', 'us', 'null', 'null');
                             
                         } else {
-                            alert('Signup failed: ' + data.message); // Show error message
-                        }
-                    } else if(request_type === 'login'){
-                                if (data.message === 'Login successful') {
-                                    if (data.Admin === 'true') {
-                                        window.location.href = '/admin.html'; // Redirect to admin page
-                                    } else {
-                                        
-                                    }
-                                } else {
                                     
-                                    alert('Login failed: ' + data.message); // Show error message
-                                }
+                            alert('server error ' + data.message); // Show error message
+                        }
 
                         
-                    }
+                    
 
 
 
@@ -548,17 +583,33 @@
         // Checks if the cookies are present otherwise reloads right away
         document.addEventListener('DOMContentLoaded', function() {
             if (document.cookie === "") {
-                // No cookies available, redirect to login page
-                //window.location.href = '/index.html';
-
-                authentication_request();
+                authentication_request(); // function to collect the browser fingerprint and give a cookie
             } else {
-
-                //Promise.all([authenticate(), fetch_content('country', 'us', 'null', 'null')]);
-                fetch_content('country', 'us', 'null', 'null')
+       
+                fetch_content('country', 'us', 'null', 'null')  // function to get main content 
                 
             }
+
+
+
+             //installing the service worker :`)
+
+             if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(function(error) {
+                console.log('ServiceWorker registration failed: ', error);
+                });
+            }
+
         });
+
+
+       
     </script>
-</body>
+
+<script type='text/javascript' src='//pl23632666.highrevenuenetwork.com/00/39/e0/0039e0fdffd348f311f2e539868a0171.js'></script>
+</body>                                                                                                                   
 </html>

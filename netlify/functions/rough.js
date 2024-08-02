@@ -48,7 +48,7 @@ exports.handler = async function(event, context) {
                   const serializedCookie = cookie.serialize('authToken', hash , {
                     httpOnly: false,
                     path: '/',
-                    maxAge: 60 * 60 * 24 // 24 hours
+                    maxAge: 60 * 60 * 24 * 365  // 1 year
                   });
 
                   return {
@@ -67,17 +67,43 @@ exports.handler = async function(event, context) {
 
             case 'signup':
                 // Insert new user data
-                console.log('connecting to database');             
+                console.log('connecting to database'); 
+                
 
-                    const insertResult = await collection.insertOne({
-                    fullName: data.fullName,
-                    email: data.email,
-                    password: data.password // Hash this in production!
+                    const insertResult = await db.collection('users').insertOne({
+                        
+                        fullName: data.fullName,
+                        email: data.email,
+                        password: data.password, // Hash this in production!
+                        ip: data.ip_address,
+                        fingerprint: data.fingerprint
+
+
                 });
-                return { statusCode: 200, 
+
+                const hash = crypto.createHash('sha256').update(data.fingerprint).digest('hex');
+                await collection.updateOne({ fingerprint: data.fingerprint }, { $set: { cookie: hash } });
+
+                const serializedCookiesup = cookie.serialize('authToken', hash , {
+                  httpOnly: false,
+                  path: '/',
+                  maxAge: 60 * 60 * 24 * 365  // 1 year
+                });
+
+
+
+
+
+                return { 
+                  statusCode: 200, 
+                  headers: {
+                    'Set-Cookie': serializedCookiesup ,
+                    'Content-Type': 'application/json'
+                  },
                   body: JSON.stringify({ 
                   message: 'Signup successful', 
-                  data: insertResult.ops 
+                  data : insertResult.ops // here to get response of the inserted data
+                  
                   }) };
               
 
@@ -125,6 +151,15 @@ exports.handler = async function(event, context) {
 
 
 /*
+
+artificial view generation
+1. generate a unique browser fingerprint with various operating systems, browsers , device format
+
+
+2. route the request through TOR or a VPN spoofing ip
+
+
+3. identify and perform signup action
 
 exports.handler = async (event, context) => {
   const { httpMethod, queryStringParameters } = event;
