@@ -394,7 +394,7 @@
 
 
         
-        function userActivity() { // display user activity
+        function userActivity() { // display user activity.
                     
                     fetch('/.netlify/functions/functionality', {
                     method: 'POST',
@@ -509,7 +509,7 @@
                 });
         }
     
-        /*
+        /*  need to fix this code by adding multiple ip ping sites because IP websites are frequently down
 
         async function getClientIP() {
             try {
@@ -536,9 +536,9 @@
         async function authentication_request(){
             
 
-            const ip = 'ip';
+            const ip = 'ip';                                        // will add the functionality later
             const finger_print = await getBrowserFingerprint();
-            console.log(ip , finger_print);
+            console.log(ip ,'fp:', finger_print);
 
             // Send data to the serverless function
             fetch('/.netlify/functions/rough', {
