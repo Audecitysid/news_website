@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('https://i.postimg.cc/08zzTg2L/javier-miranda-Al-J9-TQqe-CV0-unsplash-1.jpg') no-repeat center center fixed;
+            background: url('https://raw.githubusercontent.com/Audecitysid/news_website/refs/heads/master/img/site-background.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
             color: #fff;
@@ -364,14 +364,14 @@
                     // Escape the title to avoid syntax errors
                     const escapedTitle = article.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
                     const escapedUrl = article.url.replace(/'/g, "\\'").replace(/"/g, '\\"');
-                    const escapedUrlToImage = (article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg').replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    const escapedUrlToImage = (article.urlToImage || 'https://raw.githubusercontent.com/Audecitysid/news_website/refs/heads/master/img/fail-safe.jpg').replace(/'/g, "\\'").replace(/"/g, '\\"');
                     const escapedDescription = (article.description || 'No description available.').replace(/'/g, "\\'").replace(/"/g, '\\"');
                     const escapedPublishedAt = article.publishedAt.replace(/'/g, "\\'").replace(/"/g, '\\"');
 
 
 
                     elem.innerHTML = `
-                        <img src="${article.urlToImage || 'https://i.postimg.cc/65Rp03F9/360-F-583342356-OE57-Dm-NMJ1w-Czwav-Iny-GYz-T6-Mdg5l-Uz3.jpg'}" class="article-image">
+                        <img src="${article.urlToImage || 'https://raw.githubusercontent.com/Audecitysid/news_website/refs/heads/master/img/fail-safe.jpg'}" class="article-image">
                         <h2 class="article-title">${article.title}</h2>
                         <p class="article-description">${article.description || 'No description available.'}</p>
                         <p class="article-time">${article.publishedAt}</p>
